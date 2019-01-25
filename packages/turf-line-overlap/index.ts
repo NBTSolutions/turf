@@ -85,6 +85,22 @@ function lineOverlap<G1 extends LineString|MultiLineString|Polygon|MultiPolygon,
                     // doesOverlaps = true;
                     if (overlapSegment) overlapSegment = concatSegment(overlapSegment, match);
                     else overlapSegment = match;
+                } else if (
+                    (tolerance === 0) ?
+                        booleanPointOnLine(coordsMatch[0], segment) && booleanPointOnLine(coordsSegment[1], match) :
+                        pointOnLine(segment, coordsMatch[0]).properties.dist <= tolerance &&
+                        pointOnLine(match, coordsSegment[1]).properties.dist <= tolerance) {
+                    let ol = lineString([coordsMatch[0], coordsSegment[1]], match.properties);
+                    if (overlapSegment) overlapSegment = concatSegment(overlapSegment, ol);
+                    else overlapSegment = ol;
+                } else if (
+                    (tolerance === 0) ?
+                        booleanPointOnLine(coordsSegment[0], match) && booleanPointOnLine(coordsMatch[1], segment) :
+                        pointOnLine(match, coordsSegment[0]).properties.dist <= tolerance &&
+                        pointOnLine(segment, coordsMatch[1]).properties.dist <= tolerance) {
+                    let ol = lineString([coordsSegment[0], coordsMatch[1]], match.properties);
+                    if (overlapSegment) overlapSegment = concatSegment(overlapSegment, ol);
+                    else overlapSegment = ol;
                 }
             }
         });
